@@ -1,0 +1,3 @@
+# allow titan user execute 'setcap' remotely without tty
+Defaults!/usr/sbin/setcap !requiretty
+%titan ALL=NOPASSWD: /usr/sbin/setcap cap_net_bind_service=+ep TitanPolicy

@@ -1,0 +1,14 @@
+[WANdisco-svn18]
+name=WANdisco Repo - subversion 1.8
+enabled=1
+baseurl=http://opensource.wandisco.com/rhel/6/svn-1.8/RPMS/x86_64/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco
+
+[WANdisco-git]
+name=WANdisco Repo - git
+enabled=1
+baseurl=http://opensource.wandisco.com/rhel/6/git/x86_64/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco
+
