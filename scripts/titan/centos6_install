@@ -53,7 +53,6 @@ yum install -q -y zlib zlib-devel bzip2 bzip2-devel readline readline-devel libu
 yum install -q -y gdbm gdbm-devel sqlite sqlite-devel openssl openssl-devel
 
 rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-shell-2.6.12-1.x86_64.rpm
-rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-tools-2.6.12-1.x86_64.rpm
 
 echo
 log 32 "Apply System Configurations ..."
@@ -106,6 +105,8 @@ if [ "$?" == 1 ]; then
 	
 	cp /etc/redis.conf /etc/redis.conf.bak
 	wget -q -O /etc/redis.conf $DL_REPO_ROOT/centos6/etc/redis.conf
+	
+	/etc/init.d/redis start
 fi
 
 echo
@@ -126,6 +127,7 @@ echo
 confirm "* Install MongoDB Server"
 if [ "$?" == 1 ]; then
 	yum install -q -y sysstat numactl
+	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-tools-2.6.12-1.x86_64.rpm
 	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-mongos-2.6.12-1.x86_64.rpm
 	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-server-2.6.12-1.x86_64.rpm
 	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-2.6.12-1.x86_64.rpm
