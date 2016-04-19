@@ -86,6 +86,15 @@ if [ "$?" == 1 ]; then
 	yum install -q -y php-mysqlnd php-pecl-mongo phpMyAdmin
 	chkconfig nginx on
 	chkconfig php-fpm on
+	
+	mkdir -p /etc/nginx/ssl /etc/nginx/conf.d/apps
+	wget -q -O /etc/nginx/ssl/dhparam.pem $DL_REPO_ROOT/centos6/etc/nginx/ssl/dhparam.pem
+	cp /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
+	wget -q -O /etc/nginx/conf.d/default.conf $DL_REPO_ROOT/centos6/etc/nginx/conf.d/default.conf
+	wget -q -O /etc/nginx/conf.d/apps/phpmyadmin.conf.off $DL_REPO_ROOT/centos6/etc/nginx/conf.d/apps/phpmyadmin.conf
+	
+	/etc/init.d/php-fpm start
+	/etc/init.d/nginx start
 fi
 
 echo
@@ -94,6 +103,11 @@ confirm "* Install MySQL Server"
 if [ "$?" == 1 ]; then
 	yum install -q -y mysql-server
 	chkconfig mysqld on
+	
+	cp /etc/my.cnf /etc/my.cnf.bak
+	wget -q -O /etc/my.cnf $DL_REPO_ROOT/centos6/etc/my.cnf
+	
+	/etc/init.d/mysqld start
 fi
 
 echo
@@ -101,8 +115,17 @@ echo
 confirm "* Install MongoDB Server"
 if [ "$?" == 1 ]; then
 	yum install -q -y sysstat numactl
+	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-mongos-2.6.12-1.x86_64.rpm
+	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-server-2.6.12-1.x86_64.rpm
 	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-2.6.12-1.x86_64.rpm
 	chkconfig mongod on
+	
+	cp /etc/mongod.conf /etc/mongod.conf.bak
+	wget -q -O /etc/mongod.conf $DL_REPO_ROOT/centos6/etc/mongod.conf
+	wget -q -O /var/lib/mongo/auth_key $DL_REPO_ROOT/centos6/misc/mongo/auth_key
+	chown mongod:mongod /var/lib/mongo/auth_key && chmod 600 /var/lib/mongo/auth_key
+	
+	/etc/init.d/mongod start
 fi
 
 echo
