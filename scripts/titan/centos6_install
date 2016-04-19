@@ -98,6 +98,17 @@ if [ "$?" == 1 ]; then
 fi
 
 echo
+# (optional) install redis server
+confirm "* Install Redis Server"
+if [ "$?" == 1 ]; then
+	yum install -q -y redis
+	chkconfig redis on
+	
+	cp /etc/redis.conf /etc/redis.conf.bak
+	wget -q -O /etc/redis.conf $DL_REPO_ROOT/centos6/etc/redis.conf
+fi
+
+echo
 # (optional) install mysql server
 confirm "* Install MySQL Server"
 if [ "$?" == 1 ]; then
