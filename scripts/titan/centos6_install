@@ -15,53 +15,70 @@ function confirm() {
 	return 0
 }
 
+DL_REPO_ROOT="https://github.com/CheyiLin/linux-res/raw/master"
+
 # create titan group
 groupadd -f -g 971 titan
+
+echo
+log 32 "Install Pre-Requirements ..."
 
 # install pre-requirements
 yum install -q -y vim screen lrzsz openssh-clients wget yum-plugin-security yum-utils sudo bind-utils man
 
 # install repo rpms
-rpm -iU https://github.com/CheyiLin/linux-res/raw/master/centos6/yum-repos/epel-release-6-8.noarch.rpm
-rpm -iU https://github.com/CheyiLin/linux-res/raw/master/centos6/yum-repos/remi-release-6.rpm
-rpm -iU https://github.com/CheyiLin/linux-res/raw/master/centos6/yum-repos/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+rpm -iU $DL_REPO_ROOT/centos6/yum-repos/epel-release-6-8.noarch.rpm
+rpm -iU $DL_REPO_ROOT/centos6/yum-repos/remi-release-6.rpm
+rpm -iU $DL_REPO_ROOT/centos6/yum-repos/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
 
 yum update -q -y epel-release remi-release rpmforge-release
 yum-config-manager -q --enable remi remi-php56 > /dev/null
 
-wget -q -O /etc/yum.repos.d/10gen.repo https://github.com/CheyiLin/linux-res/raw/master/centos6/yum-repos/10gen.repo
-wget -q -O /etc/yum.repos.d/nginx.repo https://github.com/CheyiLin/linux-res/raw/master/centos6/yum-repos/nginx.repo
-wget -q -O /etc/yum.repos.d/rsyslogall.repo https://github.com/CheyiLin/linux-res/raw/master/centos6/yum-repos/rsyslogall.repo
-wget -q -O /etc/yum.repos.d/WANdisco.repo https://github.com/CheyiLin/linux-res/raw/master/centos6/yum-repos/WANdisco.repo
-wget -q -O /tmp/RPM-GPG-KEY-WANdisco http://opensource.wandisco.com/RPM-GPG-KEY-WANdisco && rpm --import /tmp/RPM-GPG-KEY-WANdisco && rm -f /tmp/RPM-GPG-KEY-WANdisco
+wget -q -O /etc/yum.repos.d/10gen.repo $DL_REPO_ROOT/centos6/yum-repos/10gen.repo
+wget -q -O /etc/yum.repos.d/nginx.repo $DL_REPO_ROOT/centos6/yum-repos/nginx.repo
+wget -q -O /etc/yum.repos.d/rsyslogall.repo $DL_REPO_ROOT/centos6/yum-repos/rsyslogall.repo
+wget -q -O /etc/yum.repos.d/WANdisco.repo $DL_REPO_ROOT/centos6/yum-repos/WANdisco.repo
+wget -q -O /tmp/RPM-GPG-KEY-WANdisco http://opensource.wandisco.com/RPM-GPG-KEY-WANdisco && \
+	rpm --import /tmp/RPM-GPG-KEY-WANdisco && rm -f /tmp/RPM-GPG-KEY-WANdisco
+
+echo
+log 32 "Install Runtime Requirements ..."
 
 # install runtime requirements
 yum update -q -y rsyslog mysql mysql-libs
-yum install -q -y rsyslog-mysql mysql mysql-libs mysql-devel mongodb-org-shell mongodb-org-tools
-
+yum install -q -y rsyslog-mysql mysql mysql-libs mysql-devel
 yum install -q -y htop lsof strace multitail sysstat rsync numactl
 yum install -q -y gcc gcc-c++ libtool make patch subversion git
 yum install -q -y zlib zlib-devel bzip2 bzip2-devel readline readline-devel libuuid libuuid-devel
 yum install -q -y gdbm gdbm-devel sqlite sqlite-devel openssl openssl-devel
 
+rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-shell-2.6.12-1.x86_64.rpm
+rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-tools-2.6.12-1.x86_64.rpm
+
+echo
+log 32 "Apply System Configurations ..."
+
 # apply system configs
 cp /etc/screenrc /etc/screenrc.bak
-wget -q -O /etc/screenrc https://github.com/CheyiLin/linux-res/raw/master/centos6/etc/screenrc
+wget -q -O /etc/screenrc $DL_REPO_ROOT/centos6/etc/screenrc
 cp /etc/sysctl.conf /etc/sysctl.conf.bak
-wget -q -O /etc/sysctl.conf https://github.com/CheyiLin/linux-res/raw/master/centos6/etc/sysctl.conf
-wget -q -O /etc/rsyslog.d/titanlog.conf https://github.com/CheyiLin/linux-res/raw/master/centos6/etc/rsyslog.d/titanlog.conf
-wget -q -O /etc/security/limits.d/titan.conf https://github.com/CheyiLin/linux-res/raw/master/centos6/etc/security/limits.d/titan.conf
+wget -q -O /etc/sysctl.conf $DL_REPO_ROOT/centos6/etc/sysctl.conf
+wget -q -O /etc/rsyslog.d/titanlog.conf $DL_REPO_ROOT/centos6/etc/rsyslog.d/titanlog.conf
+wget -q -O /etc/security/limits.d/titan.conf $DL_REPO_ROOT/centos6/etc/security/limits.d/titan.conf
 
 # disable services
 chkconfig postfix off
 
+echo
 # (optional) install cmake
 confirm "* Install CMake"
 if [ "$?" == 1 ]; then
-	wget -q -O /tmp/cmake-Linux-x86_64.sh https://github.com/CheyiLin/linux-res/raw/master/centos6/dist/binaries/cmake-3.5.2-Linux-x86_64.sh
-	sh /tmp/cmake-Linux-x86_64.sh --skip-license --exclude-subdir --prefix=/usr/local
+	wget -q -O /tmp/cmake-Linux-x86_64.sh \
+		$DL_REPO_ROOT/centos6/dist/binaries/cmake-3.5.2-Linux-x86_64.sh && \
+		sh /tmp/cmake-Linux-x86_64.sh --skip-license --exclude-subdir --prefix=/usr/local
 fi
 
+echo
 # (optional) install nginx + php-fpm
 confirm "* Install Nginx Web Server + PHP-FPM"
 if [ "$?" == 1 ]; then
@@ -71,6 +88,7 @@ if [ "$?" == 1 ]; then
 	chkconfig php-fpm on
 fi
 
+echo
 # (optional) install mysql server
 confirm "* Install MySQL Server"
 if [ "$?" == 1 ]; then
@@ -78,11 +96,16 @@ if [ "$?" == 1 ]; then
 	chkconfig mysqld on
 fi
 
+echo
 # (optional) install mongodb server
 confirm "* Install MongoDB Server"
 if [ "$?" == 1 ]; then
-	yum install -q -y sysstat numactl mongodb-org
+	yum install -q -y sysstat numactl
+	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-2.6.12-1.x86_64.rpm
 	chkconfig mongod on
 fi
+
+echo
+log 37 "Installation Completed"
 
 exit 0
