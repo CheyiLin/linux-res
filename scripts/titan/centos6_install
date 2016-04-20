@@ -27,9 +27,9 @@ log 32 "Install Pre-Requirements ..."
 yum install -q -y vim screen lrzsz openssh-clients wget yum-plugin-security yum-utils sudo bind-utils man
 
 # install repo rpms
-rpm -iU $DL_REPO_ROOT/centos6/yum-repos/epel-release-6-8.noarch.rpm
-rpm -iU $DL_REPO_ROOT/centos6/yum-repos/remi-release-6.rpm
-rpm -iU $DL_REPO_ROOT/centos6/yum-repos/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+rpm -ivU $DL_REPO_ROOT/centos6/yum-repos/epel-release-6-8.noarch.rpm
+rpm -ivU $DL_REPO_ROOT/centos6/yum-repos/remi-release-6.rpm
+rpm -ivU $DL_REPO_ROOT/centos6/yum-repos/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
 
 yum update -q -y epel-release remi-release rpmforge-release
 yum-config-manager -q --enable remi remi-php56 > /dev/null
@@ -52,7 +52,7 @@ yum install -q -y gcc gcc-c++ libtool make patch subversion git
 yum install -q -y zlib zlib-devel bzip2 bzip2-devel readline readline-devel libuuid libuuid-devel
 yum install -q -y gdbm gdbm-devel sqlite sqlite-devel openssl openssl-devel
 
-rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-shell-2.6.12-1.x86_64.rpm
+rpm -ivU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-shell-2.6.12-1.x86_64.rpm
 
 echo
 log 32 "Apply System Configurations ..."
@@ -72,7 +72,7 @@ echo
 # (optional) install cmake
 confirm "* Install CMake"
 if [ "$?" == 1 ]; then
-	wget -q -O /tmp/cmake-Linux-x86_64.sh \
+	wget -O /tmp/cmake-Linux-x86_64.sh \
 		$DL_REPO_ROOT/centos6/dist/binaries/cmake-3.5.2-Linux-x86_64.sh && \
 		sh /tmp/cmake-Linux-x86_64.sh --skip-license --exclude-subdir --prefix=/usr/local
 fi
@@ -127,10 +127,10 @@ echo
 confirm "* Install MongoDB Server"
 if [ "$?" == 1 ]; then
 	yum install -q -y sysstat numactl
-	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-tools-2.6.12-1.x86_64.rpm
-	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-mongos-2.6.12-1.x86_64.rpm
-	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-server-2.6.12-1.x86_64.rpm
-	rpm -iU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-2.6.12-1.x86_64.rpm
+	rpm -ivU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-tools-2.6.12-1.x86_64.rpm
+	rpm -ivU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-mongos-2.6.12-1.x86_64.rpm
+	rpm -ivU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-server-2.6.12-1.x86_64.rpm
+	rpm -ivU $DL_REPO_ROOT/centos6/dist/binaries/mongodb-org-2.6.12-1.x86_64.rpm
 	chkconfig mongod on
 	
 	cp /etc/mongod.conf /etc/mongod.conf.bak
